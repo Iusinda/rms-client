@@ -39,33 +39,46 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/filter_Label"
-        android:id="@+id/filterLabel"
-        android:layout_below="@+id/searchingField"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="19dp" />
-
     <Spinner
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/filterValue"
+        android:id="@+id/districtDropdown"
         android:spinnerMode="dropdown"
         android:layout_below="@+id/searchingField"
-        android:layout_toRightOf="@+id/filterLabel"
-        android:layout_toEndOf="@+id/filterLabel" />
+        android:layout_toEndOf="@+id/searchingField" />
 
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/restaurantList"
-        android:layout_below="@+id/filterValue"
+        android:layout_below="@+id/districtDropdown"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:choiceMode="singleChoice" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/submitBtn"
+        android:id="@+id/submit"
+        android:layout_alignBottom="@+id/searchingField"
+        android:layout_alignLeft="@+id/ticketBtn"
+        android:layout_alignStart="@+id/ticketBtn"
+        android:layout_alignTop="@+id/searchingField"
+        android:layout_alignRight="@+id/ticketBtn"
+        android:layout_alignEnd="@+id/ticketBtn" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/areaDropdown"
+        android:layout_above="@+id/restaurantList"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:spinnerMode="dropdown"
+        android:layout_toStartOf="@+id/districtDropdown"
+        android:layout_toLeftOf="@+id/districtDropdown" />
 </RelativeLayout>

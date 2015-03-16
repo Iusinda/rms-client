@@ -9,6 +9,7 @@
     <string name="refreshBtn">Refresh</string>
     <string name="restaurantBtn">Restaurants</string>
     <string name="cancelBtn">Cancel this ticket</string>
+    <string name="submitBtn">submit</string>
     <string name="restaurantName">Restaurant Name :</string>
     <string name="restaurantInfo">Restaurant Info :</string>
     <string name="searching_Label">Search Keyword:</string>

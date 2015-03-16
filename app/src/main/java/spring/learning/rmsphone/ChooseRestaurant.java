@@ -4,6 +4,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 
 
 public class ChooseRestaurant extends ActionBarActivity {
@@ -12,6 +13,8 @@ public class ChooseRestaurant extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_restaurant);
+        EditText searchingField = (EditText)findViewById(R.id.searchingField);
+
     }
 
 
