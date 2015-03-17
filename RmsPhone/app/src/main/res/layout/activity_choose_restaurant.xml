@@ -1,0 +1,114 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".ChooseRestaurant">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+
+        <GridLayout
+            android:columnCount="4"
+            android:rowCount="1"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="My Tickets"
+                android:id="@+id/ticketBtn"
+                android:layout_row="0"
+                android:layout_column="3" />
+        </GridLayout>
+
+        <GridLayout
+            android:columnCount="2"
+            android:rowCount="1"
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Search :"
+                android:id="@+id/searchFieldLabel"
+                android:layout_row="0"
+                android:layout_column="0" />
+
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/searchField"
+                android:text=""
+                android:layout_row="0"
+                android:layout_column="1" />
+
+        </GridLayout>
+        <GridLayout
+            android:columnCount="4"
+            android:rowCount="1"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Spinner
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/areaDropdown"
+                android:layout_row="0"
+                android:layout_column="0"
+                android:prompt="@string/areaDefault"
+                android:spinnerMode="dropdown" />
+            <Spinner
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:prompt="@string/districtDefault"
+                android:id="@+id/districtDropdown"
+                android:layout_row="0"
+                android:layout_column="1"
+                />
+            <Spinner
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/areaDropdownId"
+                android:layout_row="0"
+                android:layout_column="2"
+                android:prompt="@string/areaDefault"
+                android:spinnerMode="dropdown" />
+            <Spinner
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:prompt="@string/districtDefault"
+                android:id="@+id/districtDropdownId"
+                android:layout_row="0"
+                android:layout_column="3"
+                />
+
+        </GridLayout>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Submit"
+            android:id="@+id/submitBtn"
+             />
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/restaurantList"
+            android:choiceMode="singleChoice" />
+
+    </LinearLayout>
+</RelativeLayout>

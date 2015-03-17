@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">RmsPhone</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="districtDefault">District</string>
+    <string name="areaDefault">Area</string>
+    <string name="serverHost">http://175.159.74.18:7001</string>
+    <string name="title_activity_choose_size">ChooseSize</string>
+    <string name="title_activity_confirm_ticket">ConfirmTicket</string>
+</resources>
