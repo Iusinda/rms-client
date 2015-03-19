@@ -2,7 +2,9 @@ package rms.fyp.rmsphone;
 
 import android.content.Context;
   import android.content.Intent;
-  import android.os.AsyncTask;
+import android.content.SharedPreferences;
+import android.opengl.Visibility;
+import android.os.AsyncTask;
   import android.support.v7.app.ActionBarActivity;
   import android.os.Bundle;
   import android.util.Log;
@@ -30,12 +32,31 @@ import java.util.ArrayList;
 public class ConfirmTicket extends ActionBarActivity {
     private Button ticketBtn, confirmBtn, homeBtn;
     private TextView restaurantName, ticketAhead, waitingTime;
-    private String restaurantId, ticketType, wsForGetTicketType, wsForGetRestaurant, serverHost;
+    private String restaurantId, ticketType, wsForGetTicketType, wsForGetRestaurant,wsForCheckTicketExist,wsForCreateTicket ,serverHost,customerId;
     private Spinner partySizePicker;
     private ArrayList<String> partySizeItems;
+    private boolean ticketExist = false;
     private int lowerRange, upperRange;
     private Intent intent;
     private Context context = this;
+    public static final String PROPERTY_CUSTOMER_ID = "customer_id";
+
+    private SharedPreferences getSharedPreferences(Context context) {
+        // This sample app persists the registration ID in shared preferences, but
+        // how you store the regID in your app is up to you.
+        return getSharedPreferences(ChooseRestaurant.class.getSimpleName(),
+                Context.MODE_PRIVATE);
+    }
+
+    private String getCustomerId(Context context) {
+        final SharedPreferences prefs = getSharedPreferences(context);
+        String customerId = prefs.getString(PROPERTY_CUSTOMER_ID, "");
+        if (customerId.isEmpty()) {
+            Log.wtf(this.getClass().toString(), "customer id not found.");
+            return "";
+        }
+        return customerId;
+    }
 
     private void initialization() {
         serverHost = this.getResources().getString(R.string.serverHost);
@@ -54,6 +75,8 @@ public class ConfirmTicket extends ActionBarActivity {
             upperRange = intent.getIntExtra("upperRange", 0);
             wsForGetRestaurant = serverHost + "/rms/restaurant?id=" + restaurantId;
             wsForGetTicketType = serverHost + "/rms/ticket?id=" + restaurantId + "&type=" + ticketType;
+            wsForCheckTicketExist = serverHost + "/rms/ticket?customerId=";
+            wsForCreateTicket = serverHost + "/rms/ticket/create";
         }
         homeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,6 +86,22 @@ public class ConfirmTicket extends ActionBarActivity {
             }
         });
         addItemsToSpinner();
+        customerId = getCustomerId(context);
+        wsForCheckTicketExist += customerId;
+        confirmBtn.setOnClickListener(new Button.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Log.wtf("customerID",customerId);
+                Log.wtf("RestaurantID",restaurantId);
+                Log.wtf("ticket Type ",ticketType);
+                Log.wtf("ws :",wsForCreateTicket);
+                //new CreateTicket().execute(wsForCreateTicket);
+
+            }
+        });
+        wsForCreateTicket = serverHost + "/rms/ticket/create?customerId="
+                +customerId+"&id="+restaurantId+"&type="+ticketType+"&size";
+
     }
 
     private void addItemsToSpinner() {
@@ -84,8 +123,14 @@ public class ConfirmTicket extends ActionBarActivity {
            super.onCreate(savedInstanceState);
            setContentView(R.layout.activity_confirm_ticket);
            initialization();
-           new getRestaurantInfo().execute(wsForGetRestaurant);
-           new getQueueInfo().execute(wsForGetTicketType);
+           new GetRestaurantInfo().execute(wsForGetRestaurant);
+           new GetQueueInfo().execute(wsForGetTicketType);
+           new CheckTicketExist().execute(wsForCheckTicketExist);
+           if(ticketExist)
+           {
+               confirmBtn.setVisibility(View.GONE);
+           }
+
        }
 
 
@@ -111,7 +156,7 @@ public class ConfirmTicket extends ActionBarActivity {
            return super.onOptionsItemSelected(item);
        }
 
-      private class getRestaurantInfo  extends AsyncTask<String, Void, String> {
+      private class GetRestaurantInfo  extends AsyncTask<String, Void, String> {
 
                  // Required initialization
 
@@ -160,7 +205,7 @@ public class ConfirmTicket extends ActionBarActivity {
 
              }
 
-     private class getQueueInfo  extends AsyncTask<String, Void, String> {
+     private class GetQueueInfo  extends AsyncTask<String, Void, String> {
 
                // Required initialization
 
@@ -213,4 +258,92 @@ public class ConfirmTicket extends ActionBarActivity {
                }
 
            }
+
+    private class CheckTicketExist  extends AsyncTask<String, Void, String> {
+        private String Error = null;
+
+        // Call after onPreExecute method
+        protected String doInBackground(String... urls) {
+            String response = "";
+            for (String url : urls) {
+                DefaultHttpClient client = new DefaultHttpClient();
+                HttpGet httpGet = new HttpGet(url);
+                try {
+                    HttpResponse execute = client.execute(httpGet);
+                    InputStream content = execute.getEntity().getContent();
+                    BufferedReader buffer = new BufferedReader(new InputStreamReader(content));
+                    String s = "";
+                    while ((s = buffer.readLine()) != null) {
+                        response += s;
+                    }
+                } catch (Exception e) {
+                    Log.wtf("Error from checkTicketExist",e.toString());
+                }
+            }
+            Log.wtf("response method checkTIcket exist", response);
+            return response;
+        }
+
+        protected void onPostExecute(String result) {
+            // NOTE: You can call UI Element here.
+            if(Error != null)
+            {
+                Log.wtf("Error",Error);
+            }
+            else {
+                if(result.isEmpty())
+                {
+                    ticketExist = false;
+                }
+                else
+                    ticketExist = true;
+            }
+        }
+
+    }
+
+    private class CreateTicket  extends AsyncTask<String, Void, String> {
+        // Required initialization
+        private String Error = null;
+        // Call after onPreExecute method
+        protected String doInBackground(String... urls) {
+            String response = "";
+            for (String url : urls) {
+                DefaultHttpClient client = new DefaultHttpClient();
+                HttpGet httpGet = new HttpGet(url);
+                try {
+                    HttpResponse execute = client.execute(httpGet);
+                    InputStream content = execute.getEntity().getContent();
+
+                    BufferedReader buffer = new BufferedReader(new InputStreamReader(content));
+                    String s = "";
+                    while ((s = buffer.readLine()) != null) {
+                        response += s;
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            Log.wtf("response", response);
+            return response;
+        }
+
+        protected void onPostExecute(String result) {
+            // NOTE: You can call UI Element here.
+            if (Error != null)
+                Log.wtf("error : ", Error);
+            else
+            {
+                try {
+                    JSONObject jsonObject = new JSONObject(result);
+                    Log.wtf(this.getClass().toString(),"Ojbect have been inserted" + jsonObject.toString());
+                } catch (JSONException e) {
+                    Log.wtf("json problems",e.toString());
+
+                }
+            }
+        }
+
+    }
    }

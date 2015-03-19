@@ -20,7 +20,6 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -60,7 +59,6 @@ public class ChooseRestaurant extends ActionBarActivity {
         private ArrayList<HashMap<String,String>> restaurantItems;
         private Button ticketBtn,submitBtn;
         private Spinner areaDropdown,districtDropdown,districtDropDownId,areaDropdownId;
-        private TextView debugText;
         private ListView restaurantList;
         private EditText searchField;
         private Context context = this;
@@ -150,7 +148,6 @@ public class ChooseRestaurant extends ActionBarActivity {
         areaDropdown = (Spinner) findViewById(R.id.areaDropdown);
         districtDropdown = (Spinner) findViewById(R.id.districtDropdown);
         restaurantList = (ListView) findViewById(R.id.restaurantList);
-        debugText = (TextView) findViewById(R.id.debugText);
         districtDropDownId = (Spinner) findViewById(R.id.districtDropdownId);
         areaDropdownId = (Spinner) findViewById(R.id.areaDropdownId);
         hostName = getResources().getString(R.string.serverHost);
@@ -527,7 +524,7 @@ public class ChooseRestaurant extends ActionBarActivity {
 
             @Override
             protected void onPostExecute(String msg) {
-                debugText.setText(msg + "\n");
+
             }
         }.execute(null, null, null);
     }
