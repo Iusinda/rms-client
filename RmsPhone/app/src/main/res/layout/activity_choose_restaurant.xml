@@ -22,6 +22,15 @@
             android:layout_height="wrap_content">
 
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="debugText"
+                android:id="@+id/debugText"
+                android:layout_row="0"
+                android:layout_column="0" />
+
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
