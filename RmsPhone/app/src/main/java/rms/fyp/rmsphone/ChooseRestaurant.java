@@ -200,6 +200,14 @@ public class ChooseRestaurant extends ActionBarActivity {
             }
         });
         searchField.clearFocus();
+        ticketBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setClass(context,ViewTicket.class);
+                startActivity(intent);
+            }
+        });
         projectNumber = "836861541346";
     }
 

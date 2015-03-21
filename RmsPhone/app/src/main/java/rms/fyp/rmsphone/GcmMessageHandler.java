@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.Toast;
 
 public class GcmMessageHandler extends IntentService {
 
@@ -53,7 +52,6 @@ public class GcmMessageHandler extends IntentService {
     private void sendNotification(String msg) {
         mNotificationManager = (NotificationManager)
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
-
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
                 new Intent(this, ChooseRestaurant.class), 0);
 

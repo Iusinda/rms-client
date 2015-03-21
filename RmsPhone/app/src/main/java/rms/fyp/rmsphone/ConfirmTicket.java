@@ -61,7 +61,7 @@ public class ConfirmTicket extends ActionBarActivity {
     private void initialization() {
         serverHost = this.getResources().getString(R.string.serverHost);
         homeBtn = (Button) findViewById(R.id.homeBtn);
-        ticketBtn = (Button) findViewById(R.id.ticketBtn);
+        ticketBtn = (Button) findViewById(R.id.ticketBtn3);
         confirmBtn = (Button) findViewById(R.id.getTicketBtn);
         restaurantName = (TextView) findViewById(R.id.restaurantNameField2);
         ticketAhead = (TextView) findViewById(R.id.ticketAheadField);
@@ -85,6 +85,14 @@ public class ConfirmTicket extends ActionBarActivity {
                 startActivity(intent);
             }
         });
+        ticketBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intent = new Intent();
+                intent.setClass(context,ViewTicket.class);
+                startActivity(intent);
+            }
+        });
         addItemsToSpinner();
         customerId = getCustomerId(context);
         wsForCheckTicketExist += customerId;
@@ -92,15 +100,19 @@ public class ConfirmTicket extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 Log.wtf("customerID",customerId);
-                Log.wtf("RestaurantID",restaurantId);
+                Log.wtf("restaurantname",restaurantName.getText().toString());
                 Log.wtf("ticket Type ",ticketType);
                 Log.wtf("ws :",wsForCreateTicket);
-                //new CreateTicket().execute(wsForCreateTicket);
-
+                wsForCreateTicket = serverHost + "/rms/ticket/create?customerId="
+                        +customerId+"&id="+restaurantId+"&type="+ticketType+"&size="+partySizePicker.getSelectedItem().toString();
+                new CreateTicket().execute(wsForCreateTicket);
+                intent = new Intent();
+                intent.setClass(context,ViewTicket.class);
+                startActivity(intent);
             }
         });
-        wsForCreateTicket = serverHost + "/rms/ticket/create?customerId="
-                +customerId+"&id="+restaurantId+"&type="+ticketType+"&size";
+
+        confirmBtn.setVisibility(View.GONE);
 
     }
 
@@ -126,10 +138,7 @@ public class ConfirmTicket extends ActionBarActivity {
            new GetRestaurantInfo().execute(wsForGetRestaurant);
            new GetQueueInfo().execute(wsForGetTicketType);
            new CheckTicketExist().execute(wsForCheckTicketExist);
-           if(ticketExist)
-           {
-               confirmBtn.setVisibility(View.GONE);
-           }
+
 
        }
 
@@ -291,13 +300,22 @@ public class ConfirmTicket extends ActionBarActivity {
                 Log.wtf("Error",Error);
             }
             else {
-                if(result.isEmpty())
+                if(result.isEmpty()|| result.trim() =="" )
                 {
                     ticketExist = false;
                 }
                 else
                     ticketExist = true;
+                if(ticketExist)
+                {
+                    confirmBtn.setVisibility(View.GONE);
+                }
+                else
+                {
+                    confirmBtn.setVisibility(View.VISIBLE);
+                }
             }
+
         }
 
     }

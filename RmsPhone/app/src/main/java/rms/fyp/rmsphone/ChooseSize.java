@@ -97,6 +97,15 @@ public class ChooseSize extends ActionBarActivity {
         serverHost = this.getResources().getString(R.string.serverHost);
         wsForRestaurant = serverHost+"/rms/restaurant?id="+restaurantId;
         wsForTicketType = serverHost+"/rms/tickettypes?id="+restaurantId;
+        ticketBtn.setOnClickListener(new View.OnClickListener() {
+                                         @Override
+                                         public void onClick(View v) {
+                                             intent = new Intent();
+                                             intent.setClass(context,ViewTicket.class);
+                                             startActivity(intent);
+                                         }
+                                     }
+        );
     }
 
 
