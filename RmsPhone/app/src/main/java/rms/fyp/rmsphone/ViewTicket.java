@@ -115,6 +115,7 @@ public class ViewTicket extends ActionBarActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Intent alarmIntent = new Intent(context, LocalReceiver.class);
+                alarmIntent.putExtra("webService",wsForticket);
                 String selectedVal = (String)parent.getSelectedItem();
                 noticeTimePref = selectedVal;
                 storeNoticePrefs(context,noticeTimePref);
@@ -151,6 +152,7 @@ public class ViewTicket extends ActionBarActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
+
                 getNoticePrefs();
                 if (noticeTimePref == null || noticeTimePref.isEmpty()) {
                     noticeTimePref = "5";
@@ -162,7 +164,7 @@ public class ViewTicket extends ActionBarActivity {
                     notificationTimePicker.setSelection(2);
                 }
                 Intent alarmIntent = new Intent(context, LocalReceiver.class);
-
+                alarmIntent.putExtra("webService",wsForticket);
                 if (targetTime != null) {
                     Timestamp current = new Timestamp(new Date().getTime());
                     long timeBeforeNotice = Long.valueOf(noticeTimePref) * 60000;
