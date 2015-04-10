@@ -1,6 +1,5 @@
 package rms.fyp.rmsphone;
 
-import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -10,7 +9,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.view.View;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -21,25 +19,23 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.sql.Timestamp;
-import java.util.Date;
 
 /**
  * Created by lohris on 20/3/15.
  */
-public class LocalReceiver extends BroadcastReceiver{
+public class LocalReceiver extends BroadcastReceiver {
 
+    public static final int NOTIFICATION_ID = 1;
     private Context context;
     private Intent intent;
     private String msg;
     private NotificationManager mNotificationManager;
-    public static final int NOTIFICATION_ID = 1;
+
     @Override
-    public void onReceive(Context context,Intent intent)
-    {
+    public void onReceive(Context context, Intent intent) {
         this.context = context;
         this.intent = intent;
-        Log.i(this.getClass().toString()," alarm Triggered");
+        Log.i(this.getClass().toString(), " alarm Triggered");
         msg = intent.getStringExtra("message");
         String wsForGettingCallTime = intent.getStringExtra("webService");
         new GetTicketInfo().execute(wsForGettingCallTime);
@@ -47,7 +43,7 @@ public class LocalReceiver extends BroadcastReceiver{
 
     }
 
-    private void sendNotification(Context context,String msg) {
+    private void sendNotification(Context context, String msg) {
         mNotificationManager = (NotificationManager)
                 context.getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -57,7 +53,7 @@ public class LocalReceiver extends BroadcastReceiver{
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)
                         .setSmallIcon(R.mipmap.ic_launcher)
-                        .setContentTitle("GCM Notification")
+                        .setContentTitle("Restaurant Reservation")
                         .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(msg))
                         .setAutoCancel(true)
@@ -68,9 +64,11 @@ public class LocalReceiver extends BroadcastReceiver{
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
 
     }
-    private class GetTicketInfo  extends AsyncTask<String, Void, String> {
+
+    private class GetTicketInfo extends AsyncTask<String, Void, String> {
         // Required initialization
         private String Error = null;
+
         // Call after onPreExecute method
         protected String doInBackground(String... urls) {
             String response = "";
@@ -91,26 +89,23 @@ public class LocalReceiver extends BroadcastReceiver{
                     e.printStackTrace();
                 }
             }
-            Log.wtf("response", response);
+            Log.i("response", response);
             return response;
         }
 
         protected void onPostExecute(String result) {
             // NOTE: You can call UI Element here.
             if (Error != null)
-                Log.wtf("error : ", Error);
-            else
-            {
+                Log.e("error : ", Error);
+            else {
                 try {
                     JSONObject jsonObject = new JSONObject(result);
                     String callTime = jsonObject.optString("callTime");
-                    if(callTime.isEmpty() ||callTime== null)
-                    {
-                        sendNotification(context,msg);
-                    }
+
+                    sendNotification(context, msg);
 
                 } catch (JSONException e) {
-                    Log.wtf("json problems",e.toString());
+                    Log.e("json problems", e.toString());
                 }
             }
         }

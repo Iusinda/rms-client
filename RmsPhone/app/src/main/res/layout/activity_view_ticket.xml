@@ -1,98 +1,118 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="rms.fyp.rmsphone.ViewTicket">
 
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:orientation="vertical">
 
         <GridLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
 
             <Button
+                android:id="@+id/refreshBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Refresh"
-                android:id="@+id/refreshBtn"
+                android:layout_column="2"
                 android:layout_row="0"
-                android:layout_column="2"/>
+                android:text="Refresh" />
 
             <Button
+                android:id="@+id/homeBtn2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Home"
-                android:id="@+id/homeBtn2"
+                android:layout_column="0"
                 android:layout_row="0"
-                android:layout_column="0" />
+                android:text="Home" />
 
         </GridLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Restaurant Name : "
-            android:id="@+id/restaurantNameFIeld3" />
 
         <TextView
+            android:id="@+id/restaurantNameFIeld3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Restaurant : "
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/restaurantTicketNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ticket Number : "
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/partySizeLabel1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="Party Size : "
-            android:id="@+id/partySizeLabel1" />
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
+            android:id="@+id/positionField"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Queue Position : "
-            android:id="@+id/positionField" />
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
+            android:id="@+id/waitingTimeField2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Waiting Time : "
-            android:id="@+id/waitingTimeField2" />
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="Ticket is called."
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <GridLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
+
             <Spinner
-                android:layout_marginTop="15dp"
+                android:id="@+id/notificationPicker"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/notificationPicker"
-                android:layout_row="0"
                 android:layout_column="2"
-                android:spinnerMode="dropdown" />
+                android:layout_marginTop="15dp"
+                android:layout_row="0"
+                android:spinnerMode="dropdown"
+                android:textColor="#000000" />
 
             <TextView
-                android:layout_marginTop="15dp"
+                android:id="@+id/notificationPickerLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Notification Time : "
-                android:id="@+id/notificationPickerLabel"
+                android:layout_column="0"
+                android:layout_marginTop="15dp"
                 android:layout_row="0"
-                android:layout_column="0" />
+                android:text="Notification Time : "
+                android:textAppearance="?android:attr/textAppearanceMedium" />
         </GridLayout>
 
         <Button
+            android:id="@+id/cancelBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="cancel this ticket"
-            android:id="@+id/cancelBtn" />
+            android:text="Cancel Ticket" />
 
     </LinearLayout>
 </RelativeLayout>

@@ -1,45 +1,42 @@
 package rms.fyp.rmsphone;
 
 import android.content.Context;
-  import android.content.Intent;
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.opengl.Visibility;
 import android.os.AsyncTask;
-  import android.support.v7.app.ActionBarActivity;
-  import android.os.Bundle;
-  import android.util.Log;
-  import android.view.Menu;
-  import android.view.MenuItem;
-  import android.view.View;
+import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-  import android.widget.Spinner;
-  import android.widget.TextView;
+import android.widget.Spinner;
+import android.widget.TextView;
 
-  import org.apache.http.HttpResponse;
-  import org.apache.http.client.methods.HttpGet;
-  import org.apache.http.impl.client.DefaultHttpClient;
-  import org.json.JSONException;
-  import org.json.JSONObject;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-  import java.io.BufferedReader;
-  import java.io.InputStream;
-  import java.io.InputStreamReader;
-import java.lang.reflect.Array;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 
 public class ConfirmTicket extends ActionBarActivity {
+    public static final String PROPERTY_CUSTOMER_ID = "customer_id";
     private Button ticketBtn, confirmBtn, homeBtn;
     private TextView restaurantName, ticketAhead, waitingTime;
-    private String restaurantId, ticketType, wsForGetTicketType, wsForGetRestaurant,wsForCheckTicketExist,wsForCreateTicket ,serverHost,customerId;
+    private String restaurantId, ticketType, wsForGetTicketType, wsForGetRestaurant, wsForCheckTicketExist, wsForCreateTicket, serverHost, customerId;
     private Spinner partySizePicker;
     private ArrayList<String> partySizeItems;
     private boolean ticketExist = false;
     private int lowerRange, upperRange;
     private Intent intent;
-    private Context context = this;
-    public static final String PROPERTY_CUSTOMER_ID = "customer_id";
 
     private SharedPreferences getSharedPreferences(Context context) {
         // This sample app persists the registration ID in shared preferences, but
@@ -52,7 +49,7 @@ public class ConfirmTicket extends ActionBarActivity {
         final SharedPreferences prefs = getSharedPreferences(context);
         String customerId = prefs.getString(PROPERTY_CUSTOMER_ID, "");
         if (customerId.isEmpty()) {
-            Log.wtf(this.getClass().toString(), "customer id not found.");
+            Log.d(this.getClass().toString(), "customer id not found.");
             return "";
         }
         return customerId;
@@ -81,7 +78,7 @@ public class ConfirmTicket extends ActionBarActivity {
         homeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                intent = new Intent(context, ChooseRestaurant.class);
+                intent = new Intent(getApplicationContext(), ChooseRestaurant.class);
                 startActivity(intent);
             }
         });
@@ -89,25 +86,25 @@ public class ConfirmTicket extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 intent = new Intent();
-                intent.setClass(context,ViewTicket.class);
+                intent.setClass(getApplicationContext(), ViewTicket.class);
                 startActivity(intent);
             }
         });
         addItemsToSpinner();
-        customerId = getCustomerId(context);
+        customerId = getCustomerId(getApplicationContext());
         wsForCheckTicketExist += customerId;
-        confirmBtn.setOnClickListener(new Button.OnClickListener(){
+        confirmBtn.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.wtf("customerID",customerId);
-                Log.wtf("restaurantname",restaurantName.getText().toString());
-                Log.wtf("ticket Type ",ticketType);
-                Log.wtf("ws :",wsForCreateTicket);
+                Log.i("customerID", customerId);
+                Log.i("restaurantname", restaurantName.getText().toString());
+                Log.i("ticket Type ", ticketType);
+                Log.i("ws :", wsForCreateTicket);
                 wsForCreateTicket = serverHost + "/rms/ticket/create?customerId="
-                        +customerId+"&id="+restaurantId+"&type="+ticketType+"&size="+partySizePicker.getSelectedItem().toString();
+                        + customerId + "&id=" + restaurantId + "&type=" + ticketType + "&size=" + partySizePicker.getSelectedItem().toString();
                 new CreateTicket().execute(wsForCreateTicket);
                 intent = new Intent();
-                intent.setClass(context,ViewTicket.class);
+                intent.setClass(getApplicationContext(), ViewTicket.class);
                 startActivity(intent);
             }
         });
@@ -118,211 +115,57 @@ public class ConfirmTicket extends ActionBarActivity {
 
     private void addItemsToSpinner() {
         partySizeItems = new ArrayList<String>();
-        for(int i = lowerRange;i <= upperRange;i++)
-        {
-            partySizeItems.add(i+"");
+        for (int i = lowerRange; i <= upperRange; i++) {
+            partySizeItems.add(i + "");
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, partySizeItems);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(ConfirmTicket.this, android.R.layout.simple_spinner_item, partySizeItems);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         partySizePicker.setAdapter(adapter);
 
     }
 
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_confirm_ticket);
+        initialization();
+        new GetRestaurantInfo().execute(wsForGetRestaurant);
+        new GetQueueInfo().execute(wsForGetTicketType);
+        new CheckTicketExist().execute(wsForCheckTicketExist);
 
-       @Override
-       protected void onCreate(Bundle savedInstanceState) {
-           super.onCreate(savedInstanceState);
-           setContentView(R.layout.activity_confirm_ticket);
-           initialization();
-           new GetRestaurantInfo().execute(wsForGetRestaurant);
-           new GetQueueInfo().execute(wsForGetTicketType);
-           new CheckTicketExist().execute(wsForCheckTicketExist);
-
-
-       }
-
-
-       @Override
-       public boolean onCreateOptionsMenu(Menu menu) {
-           // Inflate the menu; this adds items to the action bar if it is present.
-           getMenuInflater().inflate(R.menu.menu_confirm_ticket, menu);
-           return true;
-       }
-
-       @Override
-       public boolean onOptionsItemSelected(MenuItem item) {
-           // Handle action bar item clicks here. The action bar will
-           // automatically handle clicks on the Home/Up button, so long
-           // as you specify a parent activity in AndroidManifest.xml.
-           int id = item.getItemId();
-
-           //noinspection SimplifiableIfStatement
-           if (id == R.id.action_settings) {
-               return true;
-           }
-
-           return super.onOptionsItemSelected(item);
-       }
-
-      private class GetRestaurantInfo  extends AsyncTask<String, Void, String> {
-
-                 // Required initialization
-
-                 private String Error = null;
-
-                 // Call after onPreExecute method
-                 protected String doInBackground(String... urls) {
-                     String response = "";
-                     for (String url : urls) {
-                         DefaultHttpClient client = new DefaultHttpClient();
-                         HttpGet httpGet = new HttpGet(url);
-                         try {
-                             HttpResponse execute = client.execute(httpGet);
-                             InputStream content = execute.getEntity().getContent();
-
-                             BufferedReader buffer = new BufferedReader(new InputStreamReader(content));
-                             String s = "";
-                             while ((s = buffer.readLine()) != null) {
-                                 response += s;
-                             }
-
-                         } catch (Exception e) {
-                             e.printStackTrace();
-                         }
-                     }
-                     Log.wtf("response", response);
-                     return response;
-                 }
-
-                 protected void onPostExecute(String result) {
-                     // NOTE: You can call UI Element here.
-                     if (Error != null)
-                         Log.wtf("error : ", Error);
-                     else
-                     {
-                         try {
-                             JSONObject jsonObject = new JSONObject(result);
-                             restaurantName.setText(jsonObject.optString("name"));
-
-                         } catch (JSONException e) {
-                             Log.wtf("json problems",e.toString());
-
-                         }
-                     }
-                 }
-
-             }
-
-     private class GetQueueInfo  extends AsyncTask<String, Void, String> {
-
-               // Required initialization
-
-               private String Error = null;
-
-               // Call after onPreExecute method
-               protected String doInBackground(String... urls) {
-                   String response = "";
-                   for (String url : urls) {
-                       DefaultHttpClient client = new DefaultHttpClient();
-                       HttpGet httpGet = new HttpGet(url);
-                       try {
-                           HttpResponse execute = client.execute(httpGet);
-                           InputStream content = execute.getEntity().getContent();
-
-                           BufferedReader buffer = new BufferedReader(new InputStreamReader(content));
-                           String s = "";
-                           while ((s = buffer.readLine()) != null) {
-                               response += s;
-                           }
-
-                       } catch (Exception e) {
-                           e.printStackTrace();
-                       }
-                   }
-                   Log.wtf("response", response);
-                   return response;
-               }
-
-               protected void onPostExecute(String result) {
-                   // NOTE: You can call UI Element here.
-
-                   if (Error != null)
-                       Log.wtf("error : ", Error);
-                   else
-                   {
-                       JSONObject jsonObj = null;
-                       try {
-                           jsonObj = new JSONObject(result);
-                           waitingTime.setText(waitingTime.getText()+" "+jsonObj.optString("duration"));
-                           ticketAhead.setText(ticketAhead.getText()+" "+jsonObj.optString("position"));
-
-                       } catch (JSONException e) {
-                           Log.e(this.getClass().toString(), e.toString());
-                       }
-
-                   }
-
-
-               }
-
-           }
-
-    private class CheckTicketExist  extends AsyncTask<String, Void, String> {
-        private String Error = null;
-
-        // Call after onPreExecute method
-        protected String doInBackground(String... urls) {
-            String response = "";
-            for (String url : urls) {
-                DefaultHttpClient client = new DefaultHttpClient();
-                HttpGet httpGet = new HttpGet(url);
-                try {
-                    HttpResponse execute = client.execute(httpGet);
-                    InputStream content = execute.getEntity().getContent();
-                    BufferedReader buffer = new BufferedReader(new InputStreamReader(content));
-                    String s = "";
-                    while ((s = buffer.readLine()) != null) {
-                        response += s;
-                    }
-                } catch (Exception e) {
-                    Log.wtf("Error from checkTicketExist",e.toString());
-                }
-            }
-            Log.wtf("response method checkTIcket exist", response);
-            return response;
-        }
-
-        protected void onPostExecute(String result) {
-            // NOTE: You can call UI Element here.
-            if(Error != null)
-            {
-                Log.wtf("Error",Error);
-            }
-            else {
-                if(result.isEmpty()|| result.trim() =="" )
-                {
-                    ticketExist = false;
-                }
-                else
-                    ticketExist = true;
-                if(ticketExist)
-                {
-                    confirmBtn.setVisibility(View.GONE);
-                }
-                else
-                {
-                    confirmBtn.setVisibility(View.VISIBLE);
-                }
-            }
-
-        }
 
     }
 
-    private class CreateTicket  extends AsyncTask<String, Void, String> {
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_confirm_ticket, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private class GetRestaurantInfo extends AsyncTask<String, Void, String> {
+
         // Required initialization
+
         private String Error = null;
+
         // Call after onPreExecute method
         protected String doInBackground(String... urls) {
             String response = "";
@@ -343,25 +186,171 @@ public class ConfirmTicket extends ActionBarActivity {
                     e.printStackTrace();
                 }
             }
-            Log.wtf("response", response);
+            Log.i("response", response);
             return response;
         }
 
         protected void onPostExecute(String result) {
             // NOTE: You can call UI Element here.
             if (Error != null)
-                Log.wtf("error : ", Error);
-            else
-            {
+                Log.e("error : ", Error);
+            else {
                 try {
                     JSONObject jsonObject = new JSONObject(result);
-                    Log.wtf(this.getClass().toString(),"Ojbect have been inserted" + jsonObject.toString());
+                    restaurantName.setText(jsonObject.optString("name"));
+
                 } catch (JSONException e) {
-                    Log.wtf("json problems",e.toString());
+                    Log.i("json problems", e.toString());
 
                 }
             }
         }
 
     }
-   }
+
+    private class GetQueueInfo extends AsyncTask<String, Void, String> {
+
+        // Required initialization
+
+        private String Error = null;
+
+        // Call after onPreExecute method
+        protected String doInBackground(String... urls) {
+            String response = "";
+            for (String url : urls) {
+                DefaultHttpClient client = new DefaultHttpClient();
+                HttpGet httpGet = new HttpGet(url);
+                try {
+                    HttpResponse execute = client.execute(httpGet);
+                    InputStream content = execute.getEntity().getContent();
+
+                    BufferedReader buffer = new BufferedReader(new InputStreamReader(content));
+                    String s = "";
+                    while ((s = buffer.readLine()) != null) {
+                        response += s;
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            Log.i("response", response);
+            return response;
+        }
+
+        protected void onPostExecute(String result) {
+            // NOTE: You can call UI Element here.
+
+            if (Error != null)
+                Log.e("error : ", Error);
+            else {
+                JSONObject jsonObj = null;
+                try {
+                    jsonObj = new JSONObject(result);
+                    String unit = "mins";
+                    if (jsonObj.getString("duration").equalsIgnoreCase("0") || jsonObj.getString("duration").equalsIgnoreCase("1"))
+                        unit = "min";
+                    waitingTime.setText(waitingTime.getText() + " " + jsonObj.optString("duration") + " min");
+                    ticketAhead.setText(ticketAhead.getText() + " " + jsonObj.optString("position"));
+
+                } catch (JSONException e) {
+                    Log.e(this.getClass().toString(), e.toString());
+                }
+
+            }
+
+
+        }
+
+    }
+
+    private class CheckTicketExist extends AsyncTask<String, Void, String> {
+        private String Error = null;
+
+        // Call after onPreExecute method
+        protected String doInBackground(String... urls) {
+            String response = "";
+            for (String url : urls) {
+                DefaultHttpClient client = new DefaultHttpClient();
+                HttpGet httpGet = new HttpGet(url);
+                try {
+                    HttpResponse execute = client.execute(httpGet);
+                    InputStream content = execute.getEntity().getContent();
+                    BufferedReader buffer = new BufferedReader(new InputStreamReader(content));
+                    String s = "";
+                    while ((s = buffer.readLine()) != null) {
+                        response += s;
+                    }
+                } catch (Exception e) {
+                    Log.e("Error:checkTicketExist", e.toString());
+                }
+            }
+            Log.i("response:TIcketexist", response);
+            return response;
+        }
+
+        protected void onPostExecute(String result) {
+            // NOTE: You can call UI Element here.
+            if (Error != null) {
+                Log.e("Error", Error);
+            } else {
+                if (result.isEmpty() || result.trim() == "") {
+                    ticketExist = false;
+                } else
+                    ticketExist = true;
+                if (ticketExist) {
+                    confirmBtn.setVisibility(View.GONE);
+                } else {
+                    confirmBtn.setVisibility(View.VISIBLE);
+                }
+            }
+
+        }
+
+    }
+
+    private class CreateTicket extends AsyncTask<String, Void, String> {
+        // Required initialization
+        private String Error = null;
+
+        // Call after onPreExecute method
+        protected String doInBackground(String... urls) {
+            String response = "";
+            for (String url : urls) {
+                DefaultHttpClient client = new DefaultHttpClient();
+                HttpGet httpGet = new HttpGet(url);
+                try {
+                    HttpResponse execute = client.execute(httpGet);
+                    InputStream content = execute.getEntity().getContent();
+
+                    BufferedReader buffer = new BufferedReader(new InputStreamReader(content));
+                    String s = "";
+                    while ((s = buffer.readLine()) != null) {
+                        response += s;
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            Log.i("response", response);
+            return response;
+        }
+
+        protected void onPostExecute(String result) {
+            // NOTE: You can call UI Element here.
+            if (Error != null)
+                Log.e("error : ", Error);
+            else {
+                try {
+                    JSONObject jsonObject = new JSONObject(result);
+                    Log.i(this.getClass().toString(), "Ojbect have been inserted" + jsonObject.toString());
+                } catch (JSONException e) {
+                    Log.e("json problems", e.toString());
+
+                }
+            }
+        }
+
+    }
+}
