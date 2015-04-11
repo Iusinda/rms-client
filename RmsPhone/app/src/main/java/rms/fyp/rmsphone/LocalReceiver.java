@@ -6,19 +6,8 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
 /**
  * Created by lohris on 20/3/15.
@@ -26,20 +15,15 @@ import java.io.InputStreamReader;
 public class LocalReceiver extends BroadcastReceiver {
 
     public static final int NOTIFICATION_ID = 1;
-    private Context context;
-    private Intent intent;
     private String msg;
     private NotificationManager mNotificationManager;
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        this.context = context;
-        this.intent = intent;
         Log.i(this.getClass().toString(), " alarm Triggered");
-        msg = intent.getStringExtra("message");
-        String wsForGettingCallTime = intent.getStringExtra("webService");
-        new GetTicketInfo().execute(wsForGettingCallTime);
-
+        Log.wtf("context: ", context.toString());
+        msg = intent.getStringExtra("Message");
+        sendNotification(context, msg);
 
     }
 
@@ -54,8 +38,6 @@ public class LocalReceiver extends BroadcastReceiver {
                 new NotificationCompat.Builder(context)
                         .setSmallIcon(R.mipmap.ic_launcher)
                         .setContentTitle("Restaurant Reservation")
-                        .setStyle(new NotificationCompat.BigTextStyle()
-                                .bigText(msg))
                         .setAutoCancel(true)
                         .setDefaults(Notification.DEFAULT_ALL)
                         .setContentText(msg);
@@ -65,50 +47,7 @@ public class LocalReceiver extends BroadcastReceiver {
 
     }
 
-    private class GetTicketInfo extends AsyncTask<String, Void, String> {
-        // Required initialization
-        private String Error = null;
 
-        // Call after onPreExecute method
-        protected String doInBackground(String... urls) {
-            String response = "";
-            for (String url : urls) {
-                DefaultHttpClient client = new DefaultHttpClient();
-                HttpGet httpGet = new HttpGet(url);
-                try {
-                    HttpResponse execute = client.execute(httpGet);
-                    InputStream content = execute.getEntity().getContent();
 
-                    BufferedReader buffer = new BufferedReader(new InputStreamReader(content));
-                    String s = "";
-                    while ((s = buffer.readLine()) != null) {
-                        response += s;
-                    }
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            Log.i("response", response);
-            return response;
-        }
-
-        protected void onPostExecute(String result) {
-            // NOTE: You can call UI Element here.
-            if (Error != null)
-                Log.e("error : ", Error);
-            else {
-                try {
-                    JSONObject jsonObject = new JSONObject(result);
-                    String callTime = jsonObject.optString("callTime");
-
-                    sendNotification(context, msg);
-
-                } catch (JSONException e) {
-                    Log.e("json problems", e.toString());
-                }
-            }
-        }
-
-    }
 }
