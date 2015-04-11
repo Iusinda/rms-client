@@ -208,7 +208,7 @@ public class ViewTicket extends ActionBarActivity {
             AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
             Intent intent = new Intent(this, LocalReceiver.class);
             intent.putExtra("Message","Your table will be ready in  " + noticeTimeInMin + " mins");
-            Log.wtf("",noticeTimeInMin+"");
+            Log.i("",noticeTimeInMin+"");
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             Calendar current = Calendar.getInstance();
             current.setTimeInMillis(System.currentTimeMillis()+ timeDiff * 60 * 1000);
@@ -216,13 +216,13 @@ public class ViewTicket extends ActionBarActivity {
             Toast.makeText(getApplicationContext(),"Notification time is updated to " + noticeTimeInMin + " mins",Toast.LENGTH_SHORT).show();
             Calendar alarmTime = Calendar.getInstance();
             alarmTime.setTimeInMillis(System.currentTimeMillis()+ timeDiff * 60 * 1000);
-            Log.wtf("Alarm set at ",alarmTime.getTime()+"");
+            Log.i("Alarm set at ",alarmTime.getTime()+"");
         }
 
     }
 
     public void cancelAlarm() {
-        Log.wtf("clear", "alarm");
+        Log.i("clear", "alarm");
         Intent intent = new Intent(this, LocalReceiver.class);
         PendingIntent sender = PendingIntent.getBroadcast(ViewTicket.this, 0, intent, 0);
         AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);

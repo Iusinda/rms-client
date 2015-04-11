@@ -21,7 +21,7 @@ public class LocalReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.i(this.getClass().toString(), " alarm Triggered");
-        Log.wtf("context: ", context.toString());
+        Log.i("context: ", context.toString());
         msg = intent.getStringExtra("Message");
         sendNotification(context, msg);
 
